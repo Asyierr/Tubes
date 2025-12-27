@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Order;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
-use App\Models\Order;
 
 class DashboardController extends Controller
 {
@@ -12,20 +12,18 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
 
-        // default value (biar aman)
         $totalOrders = 0;
         $activeOrders = 0;
         $completedOrders = 0;
 
-        // cek apakah tabel orders ada
         if (Schema::hasTable('orders')) {
-            $totalOrders = Order::where('user_id', $user->id)->count();
+            $totalOrders = Order::where('customer_id', $user->id)->count();
 
-            $activeOrders = Order::where('user_id', $user->id)
-                ->whereIn('status', ['pending', 'in_progress'])
+            $activeOrders = Order::where('customer_id', $user->id)
+                ->whereIn('status', ['pending', 'accepted', 'in_progress'])
                 ->count();
 
-            $completedOrders = Order::where('user_id', $user->id)
+            $completedOrders = Order::where('customer_id', $user->id)
                 ->where('status', 'completed')
                 ->count();
         }

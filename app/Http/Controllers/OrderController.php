@@ -2,16 +2,14 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Controllers\Controller; 
 use App\Models\Order;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 
 class OrderController extends Controller
 {
     public function index()
     {
-        $orders = Order::where('user_id', Auth::id())
+        $orders = Order::where('customer_id', auth()->id())
             ->latest()
             ->get();
 
@@ -33,7 +31,7 @@ class OrderController extends Controller
         ]);
 
         Order::create([
-            'user_id' => Auth::id(),
+            'customer_id' => auth()->id(),
             'pickup_address' => $request->pickup_address,
             'destination_address' => $request->destination_address,
             'item_type' => $request->item_type,
@@ -41,6 +39,6 @@ class OrderController extends Controller
             'status' => 'pending',
         ]);
 
-        return redirect()->route('orders.index');
+        return redirect()->route('dashboard');
     }
 }

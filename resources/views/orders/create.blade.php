@@ -5,27 +5,43 @@
         <form method="POST" action="{{ route('orders.store') }}" class="space-y-4">
             @csrf
 
-            <input type="text" name="pickup_address"
+            <input
+                type="text"
+                name="pickup_address"
                 placeholder="Alamat Pickup"
                 class="w-full p-2 rounded bg-gray-800"
-                required>
+                required
+            >
 
-            <input type="text" name="destination_address"
+            <input
+                type="text"
+                name="destination_address"
                 placeholder="Alamat Tujuan"
                 class="w-full p-2 rounded bg-gray-800"
-                required>
+                required
+            >
 
-            <input type="text" name="item_type"
+            <input
+                type="text"
+                name="item_type"
                 placeholder="Jenis Barang (contoh: lemari, kardus)"
                 class="w-full p-2 rounded bg-gray-800"
-                required>
+                required
+            >
 
-            <input type="number" name="weight"
-                placeholder="Berat Barang (kg, opsional)"
-                class="w-full p-2 rounded bg-gray-800">
+            <input
+                type="number"
+                name="weight"
+                min="1"
+                step="1"
+                placeholder="Berat Barang (kg)"
+                class="w-full p-2 rounded bg-gray-800"
+            >
 
             <button
-                class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded font-semibold">
+                type="submit"
+                class="w-full bg-blue-600 hover:bg-blue-700 py-2 rounded font-semibold"
+            >
                 Simpan Order
             </button>
         </form>
