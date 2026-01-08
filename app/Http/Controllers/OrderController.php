@@ -41,4 +41,16 @@ class OrderController extends Controller
 
         return redirect()->route('dashboard');
     }
+
+    public function pay(Order $order)
+{
+    $order->update([
+        'payment_status' => 'paid',
+        'status' => 'completed'
+    ]);
+
+    return redirect()->route('orders.show', $order)
+        ->with('success', 'Pembayaran berhasil, order selesai');
+}
+
 }

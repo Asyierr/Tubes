@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Driver\DriverController;
@@ -27,15 +28,24 @@ Route::get('/register/user', [RegisteredUserController::class, 'createUser'])
 Route::get('/register/driver', [RegisteredUserController::class, 'createDriver'])
     ->name('register.driver');
 
-Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])
-    ->name('dashboard');
-
 Route::middleware(['auth'])->group(function () {
+
+    Route::get('/dashboard', [DashboardController::class, 'index'])
+        ->name('dashboard');
+
     Route::resource('orders', OrderController::class);
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::post('/orders/{order}/pay', [PaymentController::class, 'pay'])
+        ->name('orders.pay');
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
 });
 
 Route::middleware(['auth', 'driver'])

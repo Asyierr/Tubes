@@ -1,59 +1,73 @@
 <?php
 
-
 namespace App\Http\Controllers\Driver;
-
 
 use App\Http\Controllers\Controller;
 use App\Models\Order;
 use Illuminate\Http\Request;
 
-
 class DriverController extends Controller
 {
-public function dashboard()
+    public function dashboard()
+    {
+        return view('driver.dashboard', [
+            'availableCount' => Order::where('status', 'pending')
+                ->whereNull('driver_id')
+                ->count(),
+
+            'activeCount' => Order::where('driver_id', auth()->id())
+                ->where('status', 'in_progress')
+                ->count(),
+
+            'completedCount' => Order::where('driver_id', auth()->id())
+                ->where('status', 'completed')
+                ->count(),
+        ]);
+    }
+
+    public function available()
+    {
+        $orders = Order::where('status', 'pending')
+            ->whereNull('driver_id')
+            ->get();
+
+        return view('driver.available', compact('orders'));
+    }
+
+    public function myOrders()
 {
-return view('driver.dashboard',[
-'availableCount' => Order::where('status','pending')->count(),
-'activeCount' => Order::where('driver_id',auth()->id())
-->where('status','in_progress')->count(),
-'completedCount' => Order::where('driver_id',auth()->id())
-->where('status','completed')->count(),
-]);
+    $orders = Order::where('driver_id', auth()->id())
+        ->orderBy('updated_at', 'desc')
+        ->get();
+
+    return view('driver.my-orders', compact('orders'));
 }
 
 
-public function available()
+
+
+    public function take(Order $order)
 {
-$orders = Order::where('status','pending')->get();
-return view('driver.available',compact('orders'));
+    $order->update([
+        'driver_id' => auth()->id(),
+        'status' => 'in_progress'
+    ]);
+
+    return redirect()->route('driver.orders.my');
 }
 
 
-public function myOrders()
+
+   public function updateStatus(Request $request, Order $order)
 {
-$orders = Order::where('driver_id',auth()->id())
-->where('status','!=','completed')
-->get();
+    if ($order->status === 'in_progress') {
+        $order->update([
+            'status' => 'waiting_payment'
+        ]);
+    }
 
-
-return view('driver.my-orders',compact('orders'));
+    return redirect()->route('driver.orders.my');
 }
 
 
-public function take(Order $order)
-{
-$order->update([
-'driver_id'=>auth()->id(),
-'status'=>'in_progress'
-]);
-return back();
-}
-
-
-public function updateStatus(Request $request, Order $order)
-{
-$order->update(['status'=>$request->status]);
-return back();
-}
 }
