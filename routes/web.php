@@ -7,10 +7,25 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\Admin\AdminDashboardController;
 use App\Http\Controllers\Admin\AdminOrderController;
 use App\Http\Controllers\Driver\DriverController;
+use App\Http\Controllers\Auth\RegisteredUserController;
 
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/register', function () {
+    return redirect()->route('register.choose');
+})->name('register');
+
+Route::get('/register/choose', function () {
+    return view('auth.choose-role');
+})->name('register.choose');
+
+Route::get('/register/user', [RegisteredUserController::class, 'createUser'])
+    ->name('register.user');
+
+Route::get('/register/driver', [RegisteredUserController::class, 'createDriver'])
+    ->name('register.driver');
 
 Route::middleware(['auth'])->get('/dashboard', [DashboardController::class, 'index'])
     ->name('dashboard');

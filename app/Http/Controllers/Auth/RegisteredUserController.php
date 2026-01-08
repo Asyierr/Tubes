@@ -15,36 +15,49 @@ use Illuminate\View\View;
 class RegisteredUserController extends Controller
 {
     /**
-     * Display the registration view.
+     * Display register as USER.
      */
-    public function create(): View
+    public function createUser(): View
     {
-        return view('auth.register');
+        return view('auth.register-user');
+    }
+
+    /**
+     * Display register as DRIVER.
+     */
+    public function createDriver(): View
+    {
+        return view('auth.register-driver');
     }
 
     /**
      * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
      */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:' . User::class],
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'role' => ['required', 'in:user,driver'],
+            'vehicle_number' => ['nullable', 'string', 'max:50'],
         ]);
 
         $user = User::create([
             'name' => $request->name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'role' => $request->role,
         ]);
 
         event(new Registered($user));
 
         Auth::login($user);
 
-        return redirect(route('dashboard', absolute: false));
+        if ($user->role === 'driver') {
+            return redirect()->route('driver.dashboard');
+        }
+
+        return redirect()->route('dashboard');
     }
 }
