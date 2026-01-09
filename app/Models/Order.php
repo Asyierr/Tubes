@@ -17,5 +17,23 @@ class Order extends Model
         'item_type',
         'weight',
         'status',
+        'price',
+        'payment_status',
+        'payment_method',
     ];
+
+    public function messages()
+    {
+        return $this->hasMany(Message::class);
+    }
+
+    public function driver()
+    {
+        return $this->belongsTo(User::class, 'driver_id');
+    }
+
+    public function customer()
+    {
+        return $this->belongsTo(User::class, 'customer_id');
+    }
 }

@@ -35,6 +35,15 @@ Route::middleware(['auth'])->group(function () {
 
     Route::resource('orders', OrderController::class);
 
+    Route::get('/orders/{order}/summary', [OrderController::class, 'summary'])->name('orders.summary');
+    Route::get('/orders/{order}/drivers', [OrderController::class, 'drivers'])->name('orders.drivers');
+    Route::post('/orders/{order}/drivers/{driver}', [OrderController::class, 'setDriver'])->name('orders.setDriver');
+    Route::get('/orders/{order}/negotiate', [OrderController::class, 'negotiate'])->name('orders.negotiate');
+    Route::post('/orders/{order}/messages', [\App\Http\Controllers\MessageController::class, 'store'])->name('orders.messages.store');
+    Route::post('/orders/{order}/confirm', [OrderController::class, 'confirm'])->name('orders.confirm');
+    Route::get('/orders/{order}/success', [OrderController::class, 'success'])->name('orders.success');
+
+    Route::get('/orders/{order}/payment', [PaymentController::class, 'show'])->name('orders.payment');
     Route::post('/orders/{order}/pay', [PaymentController::class, 'pay'])
         ->name('orders.pay');
 
@@ -58,6 +67,12 @@ Route::middleware(['auth', 'driver'])
 
         Route::get('/orders/available', [DriverController::class, 'available'])
             ->name('orders.available');
+
+        Route::get('/orders/requests', [DriverController::class, 'requests'])
+            ->name('orders.requests');
+
+        Route::get('/orders/{order}/negotiate', [DriverController::class, 'negotiate'])
+            ->name('orders.negotiate');
 
         Route::get('/orders/my', [DriverController::class, 'myOrders'])
             ->name('orders.my');
